@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Azul</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  </head>
+  <body>
+    <div id="board"></div>
+    <table id="scores">
+      <tbody>
+        <tr><td>tiles:</td><td id="tiles-score">0</td></tr>
+        <tr><td>vertical bonus:</td> <td id="vertical-bonus">0</td></tr>
+        <tr><td>horizontal bonus:</td> <td id="horizontal-bonus">0</td></tr>
+        <tr><td>all-colors bonus:</td> <td id="all-colors-bonus">0</td></tr>
+        <tr><td>total:</td> <td id="total-score">0</td></tr>
+      </tbody>
+    </table>
+  </body>
+  <script>
+    "use strict";
+
+    const board = document.getElementById('board');
+
+    const totalScore = document.getElementById('total-score');
+    const tilesScore = document.getElementById('tiles-score');
+    const horizontalBonus = document.getElementById('horizontal-bonus');
+    const verticalBonus = document.getElementById('vertical-bonus');
+    const allColorsBonus = document.getElementById('all-colors-bonus');
+
+    const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
+
+    const clinks = [new Audio('clink.mp3'), new Audio('clink.mp3'), new Audio('clink.mp3'), new Audio('clink.mp3')];
+    function playClink() {
+      const clink = clinks.pop();
+      clink.play();
+      clinks.unshift(clink);
+    }
+
+    // Create squares
+    for (let y=0; y< 5; y++) {
+      for (let x=0; x< 5; x++) {
+        const square = document.createElement('span');
+        square.dataset.x = x;
+        square.dataset.y = y;
+        square.dataset.color = colors[x];
+        square.classList.add('square');
+        board.appendChild(square);
+      }
+      // Rotate colors
+      colors.unshift(colors.pop());
+    }
+
+    const filledSquares = [];
+    function calculateSquareValues() {
+      for (const square of [...board.getElementsByClassName('square')]) {
+        if (!square.classList.contains('filled')) {
+          let tileValue = 0;
+
+          let adjacentX = 0;
+          let adjacentY = 0;
+
+          for (let s = square; s = getAdjacentFilledSquare(s, 'right');) { tileValue++; adjacentX++; }
+          for (let s = square; s = getAdjacentFilledSquare(s, 'left');)  { tileValue++; adjacentX++; }
+          for (let s = square; s = getAdjacentFilledSquare(s, 'down');)  { tileValue++; adjacentY++; }
+          for (let s = square; s = getAdjacentFilledSquare(s, 'up');)    { tileValue++; adjacentY++; }
+
+          if (adjacentX > 0) tileValue++;
+          if (adjacentY > 0) tileValue++;
+          if ((adjacentX + adjacentY) === 0) tileValue = 1;
+
+          square.tileValue = tileValue;
+
+          square.horizontalBonus = (adjacentX === 4) ? 2 : 0;
+          square.verticalBonus   = (adjacentY === 4) ? 7 : 0;
+
+          const filledSameColor = [...board.querySelectorAll(`.square.filled[data-color="${square.dataset.color}"]`)];
+          square.allColorsBonus = (filledSameColor.length === 4) ? 10 : 0;
+
+          square.totalValue = square.tileValue + square.horizontalBonus + square.verticalBonus + square.allColorsBonus;
+          square.textContent = square.totalValue;
+        }
+      }
+    }
+    calculateSquareValues();
+    function getAdjacentFilledSquare(square, direction) {
+      let x = parseInt(square.dataset.x);
+      let y = parseInt(square.dataset.y);
+      if (direction === 'right') x++;
+      if (direction === 'left')  x--;
+      if (direction === 'down')  y++;
+      if (direction === 'up')    y--;
+      return board.querySelector(`.square.filled[data-x="${x}"][data-y="${y}"]`);
+    }
+    board.onmousedown = event => {
+      if (event.target.classList.contains('square')) {
+        toggleSquare(event.target);
+      }
+    }
+    board.onmouseover = event => {
+      if (event.buttons === 1) {
+        const element = document.elementFromPoint(event.clientX, event.clientY);
+        if (element.classList.contains('square')) {
+          toggleSquare(element);
+        }
+      }
+    }
+    board.ontouchstart = event => {
+      if (event.target.classList.contains('square')) {
+        toggleSquare(event.target);
+      }
+    }
+    function toggleSquare(square) {
+      const value = parseInt(square.textContent);
+      if (!square.classList.contains('filled')) {
+        playClink();
+        square.classList.add('filled');
+        square.classList.add('active');
+        if (filledSquares.length) {
+          filledSquares[filledSquares.length-1].classList.remove('active');
+        }
+        filledSquares.push(square);
+        tilesScore.textContent = parseInt(tilesScore.textContent) + square.tileValue;
+        verticalBonus.textContent = parseInt(verticalBonus.textContent) + square.verticalBonus;
+        horizontalBonus.textContent = parseInt(horizontalBonus.textContent) + square.horizontalBonus;
+        allColorsBonus.textContent = parseInt(allColorsBonus.textContent) + square.allColorsBonus;
+        totalScore.textContent = parseInt(totalScore.textContent) + value;
+      } else if (square === filledSquares[filledSquares.length-1]) {
+        const activeSquare = filledSquares.pop();
+        activeSquare.classList.remove('filled');
+        activeSquare.classList.remove('active');
+        totalScore.textContent = parseInt(totalScore.textContent) - value;
+        if (filledSquares.length) {
+          filledSquares[filledSquares.length-1].classList.add('active');
+        }
+      }
+      calculateSquareValues();
+    }
+  </script>
+  <style>
+    html,body {
+      width:  100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background-color: #fdf1e6;
+    }
+    #board {
+      width:  100vmin;
+      height: 100vmin;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows:    repeat(5, 1fr);
+      user-select: none;
+    }
+    .square {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 10vmin;
+      font-weight: bold;
+      font-family: sans-serif;
+      color: white;
+      text-shadow: 0.2vmin 0.2vmin 1.8vmin black;
+      width:  calc((100vmin / 5) - 2vmin);
+      height: calc((100vmin / 5) - 2vmin);
+      margin: 1vmin;
+      border-radius: 1vmin;
+      opacity: 0.3;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .square.filled {
+      opacity: 1;
+      box-shadow: 0.3vmin 0.3vmin 2vmin 0.5vmin black, inset -1vmin -1vmin 1vmin #888, inset 1vmin 1vmin 1vmin white;
+      transform: scale(1.05);
+    }
+    .square.filled::before {
+      box-shadow: inset -1vmin -1vmin 1vmin rgba(0,0,0,0.23), inset 1vmin 1vmin 1vmin rgba(255,255,255,0.55);
+    }
+    .square.active {
+      outline: 1vmin solid orange;
+    }
+    .square::before {
+      content: '';
+      display: block;
+      position: absolute;
+      width:  100%;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-size: contain;
+      z-index: -1;
+    }
+    .square[data-color="blue"]::before       { background-color: #1991b3; }
+    .square[data-color="orange-red"]::before { background-image: url('tiles/orange-red.svg'); }
+    .square[data-color="red"]::before        { background-color: #ef3c45; }
+    .square[data-color="black-blue"]::before { background-image: url('tiles/black-blue.svg'); }
+    .square[data-color="white-blue"]::before { background-image: url('tiles/white-blue.svg'); }
+    #scores {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      font-size: 7vmin;
+      text-align: right;
+    }
+    #scores tr:last-of-type {
+      font-weight: bold;
+    }
+  </style>
+</html>
