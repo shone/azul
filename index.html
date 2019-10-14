@@ -130,6 +130,10 @@
         const activeSquare = filledSquares.pop();
         activeSquare.classList.remove('filled');
         activeSquare.classList.remove('active');
+        tilesScore.textContent = parseInt(tilesScore.textContent) - square.tileValue;
+        verticalBonus.textContent = parseInt(verticalBonus.textContent) - square.verticalBonus;
+        horizontalBonus.textContent = parseInt(horizontalBonus.textContent) - square.horizontalBonus;
+        allColorsBonus.textContent = parseInt(allColorsBonus.textContent) - square.allColorsBonus;
         totalScore.textContent = parseInt(totalScore.textContent) - value;
         if (filledSquares.length) {
           filledSquares[filledSquares.length-1].classList.add('active');
