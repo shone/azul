@@ -94,6 +94,7 @@
     board.onmousedown = event => {
       if (event.target.classList.contains('square')) {
         toggleSquare(event.target);
+        event.preventDefault();
       }
     }
     board.onmouseover = event => {
@@ -107,6 +108,7 @@
     board.ontouchstart = event => {
       if (event.target.classList.contains('square')) {
         toggleSquare(event.target);
+        event.preventDefault();
       }
     }
     function toggleSquare(square) {
