@@ -3,31 +3,69 @@
   <head>
     <title>Azul</title>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <meta name="theme-color" content="#000">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="board"></div>
-    <table id="scores">
-      <tbody>
-        <tr><td>tiles:</td><td id="tiles-score">0</td></tr>
-        <tr><td>vertical bonus:</td> <td id="vertical-bonus">0</td></tr>
-        <tr><td>horizontal bonus:</td> <td id="horizontal-bonus">0</td></tr>
-        <tr><td>all-colors bonus:</td> <td id="all-colors-bonus">0</td></tr>
-        <tr><td>total:</td> <td id="total-score">0</td></tr>
-      </tbody>
-    </table>
+    <div id="panel">
+      <img src="azul_logo.svg">
+      <div class="buttons">
+        <button id="undo-button">undo</button>
+        <button id="clear-button">clear</button>
+      </div>
+      <div class="scores">
+        <div class="score-box tiles-score-box">
+          <img src="tile-value.svg">
+          <span class="value" id="tiles-score">0</span>
+        </div>
+        <div class="bonuses">
+          <div class="left-group">
+            <div class="score-box">
+              <img src="horizontal-bonus.svg">
+              <div class="value">+<span id="horizontal-bonus">0</span></div>
+            </div>
+            <div class="score-box">
+              <img src="all-color-bonus.svg">
+              <div class="value">+<span id="all-colors-bonus">0</span></div>
+            </div>
+          </div>
+          <div class="score-box">
+            <img src="vertical-bonus.svg">
+            <div class="value">+<span id="vertical-bonus">0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="total-score-box">
+        Total: <span id="total-score">0</span>
+      </div>
+    </div>
   </body>
   <script>
     "use strict";
 
     const board = document.getElementById('board');
+    function updateBoardSize() {
+      let size = 0;
+      if (window.innerWidth > window.innerHeight) {
+        const bodyMargin = window.innerHeight * 0.01;
+        size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.4)) + 'px';
+      } else {
+        const bodyMargin = window.innerWidth * 0.01;
+        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.5)) + 'px';
+      }
+      board.style.width  = size;
+      board.style.height = size;
+      board.style.fontSize = size;
+    }
+    updateBoardSize();
+    window.onresize = updateBoardSize;
 
-    const totalScore = document.getElementById('total-score');
-    const tilesScore = document.getElementById('tiles-score');
-    const horizontalBonus = document.getElementById('horizontal-bonus');
-    const verticalBonus = document.getElementById('vertical-bonus');
-    const allColorsBonus = document.getElementById('all-colors-bonus');
-
-    const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
+    let tilesScore = 0;
+    let horizontalBonus = 0;
+    let verticalBonus = 0;
+    let allColorsBonus = 0;
 
     const clinks = [new Audio('clink.mp3'), new Audio('clink.mp3'), new Audio('clink.mp3'), new Audio('clink.mp3')];
     function playClink() {
@@ -37,6 +75,7 @@
     }
 
     // Create squares
+    const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
     for (let y=0; y< 5; y++) {
       for (let x=0; x< 5; x++) {
         const square = document.createElement('span');
@@ -46,11 +85,10 @@
         square.classList.add('square');
         board.appendChild(square);
       }
-      // Rotate colors
+      // Rotate colors on each row
       colors.unshift(colors.pop());
     }
 
-    const filledSquares = [];
     function calculateSquareValues() {
       for (const square of [...board.getElementsByClassName('square')]) {
         if (!square.classList.contains('filled')) {
@@ -111,6 +149,8 @@
         event.preventDefault();
       }
     }
+
+    const filledSquares = [];
     function toggleSquare(square) {
       const value = parseInt(square.textContent);
       if (!square.classList.contains('filled')) {
@@ -121,65 +161,128 @@
           filledSquares[filledSquares.length-1].classList.remove('active');
         }
         filledSquares.push(square);
-        tilesScore.textContent = parseInt(tilesScore.textContent) + square.tileValue;
-        verticalBonus.textContent = parseInt(verticalBonus.textContent) + square.verticalBonus;
-        horizontalBonus.textContent = parseInt(horizontalBonus.textContent) + square.horizontalBonus;
-        allColorsBonus.textContent = parseInt(allColorsBonus.textContent) + square.allColorsBonus;
-        totalScore.textContent = parseInt(totalScore.textContent) + value;
+        tilesScore      += square.tileValue;
+        verticalBonus   += square.verticalBonus;
+        horizontalBonus += square.horizontalBonus;
+        allColorsBonus  += square.allColorsBonus;
       } else if (square === filledSquares[filledSquares.length-1]) {
         const activeSquare = filledSquares.pop();
         activeSquare.classList.remove('filled');
         activeSquare.classList.remove('active');
-        tilesScore.textContent = parseInt(tilesScore.textContent) - square.tileValue;
-        verticalBonus.textContent = parseInt(verticalBonus.textContent) - square.verticalBonus;
-        horizontalBonus.textContent = parseInt(horizontalBonus.textContent) - square.horizontalBonus;
-        allColorsBonus.textContent = parseInt(allColorsBonus.textContent) - square.allColorsBonus;
-        totalScore.textContent = parseInt(totalScore.textContent) - value;
+        tilesScore      -= square.tileValue;
+        verticalBonus   -= square.verticalBonus;
+        horizontalBonus -= square.horizontalBonus;
+        allColorsBonus  -= square.allColorsBonus;
         if (filledSquares.length) {
           filledSquares[filledSquares.length-1].classList.add('active');
         }
       }
       calculateSquareValues();
+      updateScores();
     }
+
+    function updateScores() {
+      document.getElementById('tiles-score').textContent = tilesScore;
+      document.getElementById('horizontal-bonus').textContent = horizontalBonus;
+      document.getElementById('vertical-bonus').textContent = verticalBonus;
+      document.getElementById('all-colors-bonus').textContent = allColorsBonus;
+      document.getElementById('total-score').textContent = tilesScore + horizontalBonus + verticalBonus + allColorsBonus;
+    }
+
+    function undo() {
+      const activeSquare = board.querySelector('.active');
+      if (activeSquare) {
+        toggleSquare(activeSquare);
+      }
+    }
+    document.getElementById('undo-button').onclick = undo;
+
+    function clear() {
+      for (const square of [...board.getElementsByClassName('square')]) {
+        square.classList.remove('filled');
+        square.classList.remove('active');
+        square.textContent = '1';
+      }
+      while (filledSquares.length) {
+        filledSquares.pop();
+      }
+      tilesScore = 0;
+      horizontalBonus = 0;
+      verticalBonus = 0;
+      allColorsBonus = 0;
+      updateScores();
+    }
+    document.getElementById('clear-button').onclick = clear;
+
+    window.addEventListener('keypress', event => {
+      if (event.key === 'z' && event.ctrlKey) {
+        undo();
+      }
+    });
   </script>
   <style>
-    html,body {
+    html {
+      background-color: black;
       width:  100%;
       height: 100%;
+      display: flex;
+      justify-content: center;
+      font-family: 'Merriweather', serif;
       margin: 0;
       overflow: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
       background-color: #fdf1e6;
+      border: 0.5vmin solid #444;
+      margin: 1vmin;
+      overflow: hidden;
+      border-radius: 1.5vmin;
+    }
+    @media (orientation: portrait) {
+      body {
+        width: 100%;
+        flex-direction: column-reverse;
+      }
     }
     #board {
-      width:  100vmin;
-      height: 100vmin;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows:    repeat(5, 1fr);
+      grid-template-columns: repeat(5, 20%);
+      grid-template-rows:    repeat(5, 20%);
       user-select: none;
+      align-self: center;
     }
     .square {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 10vmin;
+      font-size: 0.1em;
       font-weight: bold;
-      font-family: sans-serif;
-      color: white;
-      text-shadow: 0.2vmin 0.2vmin 1.8vmin black;
-      width:  calc((100vmin / 5) - 2vmin);
-      height: calc((100vmin / 5) - 2vmin);
-      margin: 1vmin;
+      color: #1f2131;
+      text-shadow: 0 0 3vmin white, 0 0 5px white;
+      width:  90%;
+      height: 90%;
+      margin: 5%;
       border-radius: 1vmin;
-      opacity: 0.3;
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      z-index: 1;
+    }
+    .square::before {
+      opacity: 0.3;
+    }
+    .square:hover::before {
+      opacity: 0.6;
     }
     .square.filled {
-      opacity: 1;
-      box-shadow: 0.3vmin 0.3vmin 2vmin 0.5vmin black, inset -1vmin -1vmin 1vmin #888, inset 1vmin 1vmin 1vmin white;
+      box-shadow: 0.3vmin 0.3vmin 2vmin 0.5vmin black;
       transform: scale(1.05);
+    }
+    .square.filled::before {
+      opacity: 1;
     }
     .square.filled::before {
       box-shadow: inset -1vmin -1vmin 1vmin rgba(0,0,0,0.23), inset 1vmin 1vmin 1vmin rgba(255,255,255,0.55);
@@ -202,15 +305,129 @@
     .square[data-color="red"]::before        { background-color: #ef3c45; }
     .square[data-color="black-blue"]::before { background-image: url('tiles/black-blue.svg'); }
     .square[data-color="white-blue"]::before { background-image: url('tiles/white-blue.svg'); }
-    #scores {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      font-size: 7vmin;
-      text-align: right;
+    img[src="azul_logo.svg"] {
+      background-color: white;
+      border-radius: 2vmin;
+      margin: 0.25vmin;
+      flex-grow: 1;
     }
-    #scores tr:last-of-type {
+    #panel {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: #444;
+      padding-left: 0.25vmin;
+      width: 40vmin;
+      align-self: stretch;
+    }
+    .scores {
+      display: flex;
+      flex-direction: column;
+    }
+    #panel .buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      padding: 0.5vmin;
+    }
+    #panel .buttons button {
+      height: 7vmin;
+      margin: 0.5vmin;
+      flex-grow: 1;
+    }
+    button {
+      border-radius: 1vmin;
+      border: 0.3vmin solid #56371d;
+      background-color: #f5ede3;
+      box-shadow: inset -0.7vmin -0.7vmin 0.7vmin rgba(0,0,0,0.23), inset 0.7vmin 0.7vmin 0.7vmin rgba(255,255,255,0.55);
+      text-shadow: rgb(0, 0, 0) 0.14vmin 0.14vmin 0.14vmin;
+      font-size: 3vmin;
+      color: #797979;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #fbf7f2;
+    }
+    button:focus {
+      outline: none;
+    }
+    #panel .tiles-score-box {
+      flex-grow: 0;
+    }
+    #panel .bonuses {
+      display: flex;
+      flex-direction: row;
+    }
+    #panel .left-group {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    #panel img[src="tile-value.svg"]       { width: 20vmin; height: 20vmin; }
+    #panel img[src="horizontal-bonus.svg"] { width: 20vmin; height: 10vmin; }
+    #panel img[src="vertical-bonus.svg"]   { width: 10vmin; height: 20vmin; }
+    #panel img[src="all-color-bonus.svg"]  { width: 13vmin; height: 13vmin; }
+    .score-box {
+      background-color: #289fd1;
+      min-width: 5vmin;
+      min-height: 5vmin;
+      flex-grow: 1;
+      box-shadow: inset -0.5vmin -0.5vmin 0.5vmin rgba(255, 255, 255, 0.4), inset 0.5vmin 0.5vmin 0.5vmin rgba(255, 255, 255, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1vmin;
+      margin: 0.25vmin;
+      position: relative;
+    }
+    .total-score-box {
+      background-color: #444;
+      box-shadow: none;
+      color: white;
+      font-size: 2.5vmin;
+      height: 7vmin;
+      flex-grow: 0;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #panel .value {
+      position: absolute;
+      top:   0;
+      right: 0;
+      padding: 0.3vmin;
+      border-bottom-left-radius: 0.8vmin;
+      color: white;
+      background-color: #444;
+      font-size: 2.7vmin;
       font-weight: bold;
+    }
+    @media (orientation: portrait) {
+      #panel {
+        width: auto;
+        min-height: 50vmin;
+      }
+      #panel .scores {
+        flex-direction: row;
+        flex-grow: 1;
+      }
+      #panel .scores > * {
+        flex-grow: 1 !important;
+      }
+    }
+    @media (max-aspect-ratio: 1/2) {
+      #panel .scores {
+        flex-direction: column;
+      }
+      #panel .bonuses {
+        flex-direction: column !important;
+        flex-grow: 3 !important;
+      }
+      #panel .value {
+        font-size: 4.5vmin;
+      }
     }
   </style>
 </html>
