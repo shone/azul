@@ -3,36 +3,36 @@
   <head>
     <title>Azul</title>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
-    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <link rel="shortcut icon" href="images/favicon.png" type="image/png">
     <meta name="theme-color" content="#000">
     <link href="https://fonts.googleapis.com/css?family=Merriweather&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="board"></div>
     <div id="panel">
-      <img src="azul_logo.svg">
+      <img src="images/azul_logo.svg">
       <div class="buttons">
         <button id="undo-button">undo</button>
         <button id="clear-button">clear</button>
       </div>
       <div class="scores">
         <div class="score-box tiles-score-box">
-          <img src="tile-value.svg">
+          <img src="images/tile-value.svg">
           <span class="value" id="tiles-score">0</span>
         </div>
         <div class="bonuses">
           <div class="left-group">
             <div class="score-box horizontal-bonus-score-box">
-              <img src="horizontal-bonus.svg">
+              <img src="images/horizontal-bonus.svg">
               <div class="value" id="horizontal-bonus">0</div>
             </div>
             <div class="score-box all-colors-bonus-score-box">
-              <img src="all-color-bonus.svg">
+              <img src="images/all-color-bonus.svg">
               <div class="value" id="all-colors-bonus">0</div>
             </div>
           </div>
           <div class="score-box vertical-bonus-score-box">
-            <img src="vertical-bonus.svg">
+            <img src="images/vertical-bonus.svg">
             <div class="value" id="vertical-bonus">0</div>
           </div>
         </div>
@@ -67,14 +67,19 @@
     let verticalBonus = 0;
     let allColorsBonus = 0;
 
-    const clinks = [new Audio('clink.mp3'), new Audio('clink.mp3'), new Audio('clink.mp3'), new Audio('clink.mp3')];
+    const clinks = [
+      new Audio('sounds/clink.mp3'),
+      new Audio('sounds/clink.mp3'),
+      new Audio('sounds/clink.mp3'),
+      new Audio('sounds/clink.mp3'),
+    ];
     function playClink() {
       const clink = clinks.pop();
       clink.play();
       clinks.unshift(clink);
     }
 
-    const swooshSound = new Audio('swoosh.mp3');
+    const swooshSound = new Audio('sounds/swoosh.mp3');
 
     // Create squares
     const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
@@ -328,7 +333,7 @@
     .square[data-color="red"]::before        { background-color: #ef3c45; }
     .square[data-color="black-blue"]::before { background-image: url('tiles/black-blue.svg'); }
     .square[data-color="white-blue"]::before { background-image: url('tiles/white-blue.svg'); }
-    img[src="azul_logo.svg"] {
+    img[src="images/azul_logo.svg"] {
       background-color: white;
       box-shadow: inset 0 0 6vmin #000000ad;
       border-radius: 2vmin;
@@ -394,10 +399,10 @@
       flex-direction: column;
       flex-grow: 1;
     }
-    #panel img[src="tile-value.svg"]       { max-width: 16vmin; max-height: 16vmin; }
-    #panel img[src="horizontal-bonus.svg"] { max-width: 20vmin; max-height:  6vmin; }
-    #panel img[src="vertical-bonus.svg"]   { max-width:  6vmin; max-height: 20vmin; }
-    #panel img[src="all-color-bonus.svg"]  { max-width: 13vmin; max-height: 13vmin; }
+    #panel img[src="images/tile-value.svg"]       { max-width: 16vmin; max-height: 16vmin; }
+    #panel img[src="images/horizontal-bonus.svg"] { max-width: 20vmin; max-height:  6vmin; }
+    #panel img[src="images/vertical-bonus.svg"]   { max-width:  6vmin; max-height: 20vmin; }
+    #panel img[src="images/all-color-bonus.svg"]  { max-width: 13vmin; max-height: 13vmin; }
     .score-box {
       background-color: #289fd1;
       min-width: 5vmin;
