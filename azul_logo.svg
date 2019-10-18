@@ -148,20 +148,22 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.313708"
-     inkscape:cx="31.838565"
-     inkscape:cy="24.58917"
+     inkscape:zoom="15.999999"
+     inkscape:cx="26.012375"
+     inkscape:cy="22.210644"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
      units="px"
-     inkscape:window-width="1267"
-     inkscape:window-height="675"
-     inkscape:window-x="74"
-     inkscape:window-y="253"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      borderlayer="true"
-     inkscape:snap-global="false" />
+     inkscape:snap-global="false"
+     showguides="true"
+     inkscape:guide-bbox="true" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -833,5 +835,40 @@
        id="path1240"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccccccccccccccccccccccc" />
+    <path
+       style="display:inline;fill:#1da2ba;fill-opacity:1;stroke:none;stroke-width:0.26458335px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 7.8692877,14.95105 c -0.086726,-0.009 -0.091629,0.0263 -0.1570965,-0.03 -0.1438469,-0.12368 -0.2067104,-0.44131 -0.3038574,-0.5178 -0.097157,-0.0765 -0.2005141,-0.0827 -0.2873209,-0.14676 -0.086826,-0.0641 -0.1104376,-0.10578 -0.1426271,-0.16123 -0.048568,-0.0837 -0.089917,-0.29042 -0.089917,-0.29042 0,0 0.065686,0.14795 0.153996,0.24701 0.115353,0.1294 0.202363,0.11688 0.3513996,0.22944 0.1484637,0.11213 0.2563127,0.20464 0.4010092,0.37208 0.1446915,0.16743 0.2433959,0.39533 0.2433959,0.39533 0,0 -0.067682,-0.0874 -0.1689818,-0.0976 z"
+       id="path926"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ssssscssscs" />
+    <path
+       sodipodi:nodetypes="ssssscssscs"
+       inkscape:connector-curvature="0"
+       id="path929"
+       d="m 9.0425954,14.95105 c 0.086726,-0.009 0.091629,0.0263 0.1570965,-0.03 0.1438469,-0.12368 0.2067104,-0.44131 0.3038574,-0.5178 0.097157,-0.0765 0.2005141,-0.0827 0.2873209,-0.14676 0.086826,-0.0641 0.1104376,-0.10578 0.1426271,-0.16123 0.048568,-0.0837 0.089917,-0.29042 0.089917,-0.29042 0,0 -0.065686,0.14795 -0.1539621,0.24701 -0.115353,0.1294 -0.202363,0.11688 -0.3513996,0.22944 -0.14847,0.11213 -0.256319,0.20464 -0.4010155,0.37208 -0.144693,0.16743 -0.2433974,0.39533 -0.2433974,0.39533 0,0 0.067682,-0.0874 0.1689818,-0.0976 z"
+       style="display:inline;fill:#1da2ba;fill-opacity:1;stroke:none;stroke-width:0.26458335px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       transform="translate(0,-280.06665)"
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:0.36778295px;line-height:1.25;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Bold Semi-Condensed';letter-spacing:-0.04233333px;word-spacing:0.10583334px;display:inline;opacity:1;fill:#241906;fill-opacity:1;stroke:none;stroke-width:0.09194574"
+       x="5.6101208"
+       y="292.8891"
+       id="text933"><tspan
+         sodipodi:role="line"
+         id="tspan931"
+         x="5.6101208"
+         y="292.8891"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:0.36778295px;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Bold Semi-Condensed';letter-spacing:-0.04233333px;word-spacing:0.10583334px;fill:#241906;fill-opacity:1;stroke-width:0.09194574">A GAME BY MICHAEL KIESSLING</tspan></text>
+    <text
+       id="text947"
+       y="16.759581"
+       x="8.4643631"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:0.84878153px;line-height:1.25;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Bold Semi-Condensed';text-align:center;letter-spacing:-0.09769824px;word-spacing:0.24424565px;text-anchor:middle;display:inline;opacity:1;fill:#241906;fill-opacity:1;stroke:none;stroke-width:0.21219538"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:0.84878153px;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Bold Semi-Condensed';text-align:center;letter-spacing:-0.09769824px;word-spacing:0.24424565px;text-anchor:middle;fill:#241906;fill-opacity:1;stroke-width:0.21219538"
+         y="16.759581"
+         x="8.415514"
+         id="tspan945"
+         sodipodi:role="line">POINT CALCULATOR</tspan></text>
   </g>
 </svg>

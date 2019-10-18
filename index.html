@@ -37,8 +37,8 @@
           </div>
         </div>
       </div>
-      <div class="total-score-box">
-        Total: <span id="total-score">0</span>
+      <div id="total-score">
+        0
       </div>
     </div>
   </body>
@@ -53,7 +53,7 @@
         size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.4)) + 'px';
       } else {
         const bodyMargin = window.innerWidth * 0.01;
-        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.5)) + 'px';
+        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.6)) + 'px';
       }
       board.style.width  = size;
       board.style.height = size;
@@ -330,9 +330,11 @@
     .square[data-color="white-blue"]::before { background-image: url('tiles/white-blue.svg'); }
     img[src="azul_logo.svg"] {
       background-color: white;
+      box-shadow: inset 0 0 6vmin #000000ad;
       border-radius: 2vmin;
       margin: 0.25vmin;
       flex-grow: 1;
+      min-height: 20vh;
     }
     #panel {
       flex-grow: 1;
@@ -347,6 +349,7 @@
     .scores {
       display: flex;
       flex-direction: column;
+      flex-grow: 1;
     }
     #panel .buttons {
       display: flex;
@@ -384,16 +387,17 @@
     #panel .bonuses {
       display: flex;
       flex-direction: row;
+      flex-grow: 1;
     }
     #panel .left-group {
       display: flex;
       flex-direction: column;
       flex-grow: 1;
     }
-    #panel img[src="tile-value.svg"]       { width: 20vmin; height: 20vmin; }
-    #panel img[src="horizontal-bonus.svg"] { width: 20vmin; height: 10vmin; }
-    #panel img[src="vertical-bonus.svg"]   { width: 10vmin; height: 20vmin; }
-    #panel img[src="all-color-bonus.svg"]  { width: 13vmin; height: 13vmin; }
+    #panel img[src="tile-value.svg"]       { max-width: 16vmin; max-height: 16vmin; }
+    #panel img[src="horizontal-bonus.svg"] { max-width: 20vmin; max-height:  6vmin; }
+    #panel img[src="vertical-bonus.svg"]   { max-width:  6vmin; max-height: 20vmin; }
+    #panel img[src="all-color-bonus.svg"]  { max-width: 13vmin; max-height: 13vmin; }
     .score-box {
       background-color: #289fd1;
       min-width: 5vmin;
@@ -414,11 +418,11 @@
       from { background-color: #aae6ff; }
       to   { background-color: #289fd1; }
     }
-    .total-score-box {
+    #total-score {
       background-color: #444;
       box-shadow: none;
       color: white;
-      font-size: 2.5vmin;
+      font-size: 5vmin;
       user-select: text;
       height: 7vmin;
       flex-grow: 0;
@@ -426,6 +430,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+    @media (orientation: portrait) {
+      #total-score {
+        height: 9vmin;
+      }
     }
     #panel .value {
       position: absolute;
@@ -452,7 +461,7 @@
         flex-grow: 1 !important;
       }
     }
-    @media (max-aspect-ratio: 1/2) {
+    @media (max-aspect-ratio: 1/3) {
       #panel .scores {
         flex-direction: column;
       }
