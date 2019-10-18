@@ -22,18 +22,18 @@
         </div>
         <div class="bonuses">
           <div class="left-group">
-            <div class="score-box">
+            <div class="score-box horizontal-bonus-score-box">
               <img src="horizontal-bonus.svg">
-              <div class="value">+<span id="horizontal-bonus">0</span></div>
+              <div class="value" id="horizontal-bonus">0</div>
             </div>
-            <div class="score-box">
+            <div class="score-box all-colors-bonus-score-box">
               <img src="all-color-bonus.svg">
-              <div class="value">+<span id="all-colors-bonus">0</span></div>
+              <div class="value" id="all-colors-bonus">0</div>
             </div>
           </div>
-          <div class="score-box">
+          <div class="score-box vertical-bonus-score-box">
             <img src="vertical-bonus.svg">
-            <div class="value">+<span id="vertical-bonus">0</span></div>
+            <div class="value" id="vertical-bonus">0</div>
           </div>
         </div>
       </div>
@@ -73,6 +73,8 @@
       clink.play();
       clinks.unshift(clink);
     }
+
+    const swooshSound = new Audio('swoosh.mp3');
 
     // Create squares
     const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
@@ -150,6 +152,14 @@
       }
     }
 
+    function flashScoreBox(scoreBox) {
+      scoreBox.classList.remove('flash');
+      setTimeout(() => {
+        scoreBox.classList.add('flash');
+        setTimeout(() => scoreBox.classList.remove('flash'), 500);
+      }, 100);
+    }
+
     const filledSquares = [];
     function toggleSquare(square) {
       const value = parseInt(square.textContent);
@@ -161,10 +171,14 @@
           filledSquares[filledSquares.length-1].classList.remove('active');
         }
         filledSquares.push(square);
-        tilesScore      += square.tileValue;
+        tilesScore += square.tileValue;
         verticalBonus   += square.verticalBonus;
         horizontalBonus += square.horizontalBonus;
         allColorsBonus  += square.allColorsBonus;
+        if (square.tileValue       > 0) flashScoreBox(document.querySelector('.tiles-score-box'));
+        if (square.verticalBonus   > 0) flashScoreBox(document.querySelector('.vertical-bonus-score-box'));
+        if (square.horizontalBonus > 0) flashScoreBox(document.querySelector('.horizontal-bonus-score-box'));
+        if (square.allColorsBonus  > 0) flashScoreBox(document.querySelector('.all-colors-bonus-score-box'));
       } else if (square === filledSquares[filledSquares.length-1]) {
         const activeSquare = filledSquares.pop();
         activeSquare.classList.remove('filled');
@@ -176,16 +190,18 @@
         if (filledSquares.length) {
           filledSquares[filledSquares.length-1].classList.add('active');
         }
+        swooshSound.play();
       }
       calculateSquareValues();
       updateScores();
     }
 
     function updateScores() {
+      const bonusDisplayText = score => (score > 0) ? `+${score}` : '0';
       document.getElementById('tiles-score').textContent = tilesScore;
-      document.getElementById('horizontal-bonus').textContent = horizontalBonus;
-      document.getElementById('vertical-bonus').textContent = verticalBonus;
-      document.getElementById('all-colors-bonus').textContent = allColorsBonus;
+      document.getElementById('horizontal-bonus').textContent = bonusDisplayText(horizontalBonus);
+      document.getElementById('vertical-bonus').textContent = bonusDisplayText(verticalBonus);
+      document.getElementById('all-colors-bonus').textContent = bonusDisplayText(allColorsBonus);
       document.getElementById('total-score').textContent = tilesScore + horizontalBonus + verticalBonus + allColorsBonus;
     }
 
@@ -194,6 +210,7 @@
       if (activeSquare) {
         toggleSquare(activeSquare);
       }
+      swooshSound.play();
     }
     document.getElementById('undo-button').onclick = undo;
 
@@ -211,6 +228,7 @@
       verticalBonus = 0;
       allColorsBonus = 0;
       updateScores();
+      swooshSound.play();
     }
     document.getElementById('clear-button').onclick = clear;
 
@@ -230,6 +248,7 @@
       font-family: 'Merriweather', serif;
       margin: 0;
       overflow: hidden;
+      user-select: none;
     }
     body {
       display: flex;
@@ -238,7 +257,7 @@
       background-color: #fdf1e6;
       border: 0.5vmin solid #444;
       margin: 1vmin;
-      overflow: hidden;
+      overflow: visible;
       border-radius: 1.5vmin;
     }
     @media (orientation: portrait) {
@@ -251,7 +270,6 @@
       display: grid;
       grid-template-columns: repeat(5, 20%);
       grid-template-rows:    repeat(5, 20%);
-      user-select: none;
       align-self: center;
     }
     .square {
@@ -289,6 +307,11 @@
     }
     .square.active {
       outline: 1vmin solid orange;
+      z-index: 2;
+    }
+    .square.active:hover {
+      outline-width: 1.5vmin;
+      outline-offset: 0.5vmin;
     }
     .square::before {
       content: '';
@@ -346,6 +369,9 @@
       color: #797979;
       cursor: pointer;
     }
+    button::-moz-focus-inner {
+      border: 0;
+    }
     button:hover {
       background-color: #fbf7f2;
     }
@@ -381,11 +407,19 @@
       margin: 0.25vmin;
       position: relative;
     }
+    .score-box.flash {
+      animation: 0.5s flash-score-box;
+    }
+    @keyframes flash-score-box {
+      from { background-color: #aae6ff; }
+      to   { background-color: #289fd1; }
+    }
     .total-score-box {
       background-color: #444;
       box-shadow: none;
       color: white;
       font-size: 2.5vmin;
+      user-select: text;
       height: 7vmin;
       flex-grow: 0;
       flex-shrink: 0;
@@ -403,6 +437,7 @@
       background-color: #444;
       font-size: 2.7vmin;
       font-weight: bold;
+      user-select: text;
     }
     @media (orientation: portrait) {
       #panel {
