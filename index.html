@@ -49,7 +49,7 @@
         size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.4)) + 'px';
       } else {
         const bodyMargin = window.innerWidth * 0.01;
-        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.6)) + 'px';
+        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.5)) + 'px';
       }
       board.style.width  = size;
       board.style.height = size;
@@ -336,7 +336,7 @@
       margin: 0.25vmin;
       padding-bottom: 2vmin;
       flex-grow: 1;
-      min-height: 20vh;
+      min-height: 15vh;
     }
     #panel {
       flex-grow: 1;
