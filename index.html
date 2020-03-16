@@ -43,6 +43,23 @@
     "use strict";
 
     const board = document.getElementById('board');
+
+    let tilesScore = 0;
+    let horizontalBonus = 0;
+    let verticalBonus = 0;
+    let allColorsBonus = 0;
+    let filledSquares = [];
+
+    // Create squares
+    const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
+    for (let y=0; y< 5; y++) {
+      for (let x=0; x< 5; x++) {
+        board.insertAdjacentHTML('beforeend', `<span class="square" data-x="${x}" data-y="${y}" data-color="${colors[x]}"></span>`);
+      }
+      // Rotate colors on each row
+      colors.unshift(colors.pop());
+    }
+
     function updateBoardSize() {
       let size = 0;
       if (window.innerWidth > window.innerHeight) {
@@ -59,11 +76,7 @@
     updateBoardSize();
     window.onresize = updateBoardSize;
 
-    let tilesScore = 0;
-    let horizontalBonus = 0;
-    let verticalBonus = 0;
-    let allColorsBonus = 0;
-
+    // Setup audio
     const clinks = [
       new Audio('sounds/clink.mp3'),
       new Audio('sounds/clink.mp3'),
@@ -75,52 +88,34 @@
       clink.play();
       clinks.unshift(clink);
     }
-
     const swooshSound = new Audio('sounds/swoosh.mp3');
 
-    // Create squares
-    const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
-    for (let y=0; y< 5; y++) {
-      for (let x=0; x< 5; x++) {
-        const square = document.createElement('span');
-        square.dataset.x = x;
-        square.dataset.y = y;
-        square.dataset.color = colors[x];
-        square.classList.add('square');
-        board.appendChild(square);
-      }
-      // Rotate colors on each row
-      colors.unshift(colors.pop());
-    }
-
     function calculateSquareValues() {
-      for (const square of [...board.getElementsByClassName('square')]) {
-        if (!square.classList.contains('filled')) {
-          let tileValue = 0;
+      for (const square of [...board.querySelectorAll('.square:not(.filled)')]) {
+        let tileValue = 0;
 
-          let adjacentX = 0;
-          let adjacentY = 0;
+        let adjacentX = 0;
+        let adjacentY = 0;
 
-          for (let s = square; s = getAdjacentFilledSquare(s, 'right');) { tileValue++; adjacentX++; }
-          for (let s = square; s = getAdjacentFilledSquare(s, 'left');)  { tileValue++; adjacentX++; }
-          for (let s = square; s = getAdjacentFilledSquare(s, 'down');)  { tileValue++; adjacentY++; }
-          for (let s = square; s = getAdjacentFilledSquare(s, 'up');)    { tileValue++; adjacentY++; }
+        for (let s = square; s = getAdjacentFilledSquare(s, 'right');) { tileValue++; adjacentX++; }
+        for (let s = square; s = getAdjacentFilledSquare(s, 'left');)  { tileValue++; adjacentX++; }
+        for (let s = square; s = getAdjacentFilledSquare(s, 'down');)  { tileValue++; adjacentY++; }
+        for (let s = square; s = getAdjacentFilledSquare(s, 'up');)    { tileValue++; adjacentY++; }
 
-          if (adjacentX > 0) tileValue++;
-          if (adjacentY > 0) tileValue++;
-          if ((adjacentX + adjacentY) === 0) tileValue = 1;
+        if (adjacentX > 0) tileValue++;
+        if (adjacentY > 0) tileValue++;
+        if ((adjacentX + adjacentY) === 0) tileValue = 1;
 
-          square.tileValue = tileValue;
+        square.tileValue = tileValue;
 
-          square.horizontalBonus = (adjacentX === 4) ? 2 : 0;
-          square.verticalBonus   = (adjacentY === 4) ? 7 : 0;
+        square.horizontalBonus = (adjacentX === 4) ? 2 : 0;
+        square.verticalBonus   = (adjacentY === 4) ? 7 : 0;
 
-          const filledSameColor = [...board.querySelectorAll(`.square.filled[data-color="${square.dataset.color}"]`)];
-          square.allColorsBonus = (filledSameColor.length === 4) ? 10 : 0;
+        const filledSameColor = [...board.querySelectorAll(`.square.filled[data-color="${square.dataset.color}"]`)];
+        square.allColorsBonus = (filledSameColor.length === 4) ? 10 : 0;
 
-          square.totalValue = square.tileValue + square.horizontalBonus + square.verticalBonus + square.allColorsBonus;
-          square.textContent = square.totalValue;
-        }
+        square.totalValue = square.tileValue + square.horizontalBonus + square.verticalBonus + square.allColorsBonus;
+        square.textContent = square.totalValue;
       }
     }
     calculateSquareValues();
@@ -162,13 +157,11 @@
       }, 100);
     }
 
-    const filledSquares = [];
     function toggleSquare(square) {
       const value = parseInt(square.textContent);
       if (!square.classList.contains('filled')) {
         playClink();
-        square.classList.add('filled');
-        square.classList.add('active');
+        square.classList.add('filled', 'active');
         if (filledSquares.length) {
           filledSquares[filledSquares.length-1].classList.remove('active');
         }
@@ -183,8 +176,7 @@
         if (square.allColorsBonus  > 0) flashScoreBox(document.querySelector('.all-colors-bonus-score-box'));
       } else if (square === filledSquares[filledSquares.length-1]) {
         const activeSquare = filledSquares.pop();
-        activeSquare.classList.remove('filled');
-        activeSquare.classList.remove('active');
+        activeSquare.classList.remove('filled', 'active');
         tilesScore      -= square.tileValue;
         verticalBonus   -= square.verticalBonus;
         horizontalBonus -= square.horizontalBonus;
@@ -218,13 +210,10 @@
 
     function clear() {
       for (const square of [...board.getElementsByClassName('square')]) {
-        square.classList.remove('filled');
-        square.classList.remove('active');
+        square.classList.remove('filled', 'active');
         square.textContent = '1';
       }
-      while (filledSquares.length) {
-        filledSquares.pop();
-      }
+      filledSquares = [];
       tilesScore = 0;
       horizontalBonus = 0;
       verticalBonus = 0;
@@ -235,7 +224,7 @@
     document.getElementById('clear-button').onclick = clear;
 
     window.addEventListener('keypress', event => {
-      if (event.key === 'z' && event.ctrlKey) {
+      if (event.ctrlKey && event.key === 'z') {
         undo();
       }
     });
