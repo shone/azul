@@ -64,10 +64,10 @@
       let size = 0;
       if (window.innerWidth > window.innerHeight) {
         const bodyMargin = window.innerHeight * 0.01;
-        size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.4)) + 'px';
+        size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.45)) + 'px';
       } else {
         const bodyMargin = window.innerWidth * 0.01;
-        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.5)) + 'px';
+        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.55)) + 'px';
       }
       board.style.width  = size;
       board.style.height = size;
@@ -246,7 +246,7 @@
       flex-direction: row;
       justify-content: center;
       background-color: #fdf1e6;
-      border: 0.5vmin solid #444;
+      border: 1vmin solid #444;
       margin: 1vmin;
       overflow: visible;
       border-radius: 1.5vmin;
@@ -322,8 +322,7 @@
     img[src="images/azul_logo.svg"] {
       background-color: white;
       box-shadow: inset 0 0 6vmin #000000ad;
-      border-radius: 2vmin;
-      margin: 0.25vmin;
+      border-radius: 1vmin;
       padding-bottom: 2vmin;
       flex-grow: 1;
       min-height: 15vh;
@@ -334,7 +333,6 @@
       flex-direction: column;
       overflow: hidden;
       background-color: #444;
-      padding-left: 0.25vmin;
       width: 40vmin;
       align-self: stretch;
     }
@@ -342,17 +340,21 @@
       display: flex;
       flex-direction: column;
       flex-grow: 1;
+      margin: -0.5vmin;
     }
     #panel .buttons {
       display: flex;
       flex-direction: row;
       justify-content: center;
-      padding: 0.5vmin;
+      padding-top:    1vmin;
+      padding-bottom: 1vmin;
     }
     #panel .buttons button {
       height: 7vmin;
-      margin: 0.5vmin;
       flex-grow: 1;
+    }
+    #panel .buttons button:first-of-type {
+      margin-right: 1vmin;
     }
     button {
       border-radius: 1vmin;
@@ -388,12 +390,13 @@
       min-width: 5vmin;
       min-height: 5vmin;
       flex-grow: 1;
+      border-radius: 0.5vmin;
       box-shadow: inset -0.5vmin -0.5vmin 0.5vmin rgba(255, 255, 255, 0.4), inset 0.5vmin 0.5vmin 0.5vmin rgba(255, 255, 255, 0.7);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 1vmin;
-      margin: 0.25vmin;
+      margin: 0.5vmin;
       position: relative;
       background-repeat: no-repeat;
       background-size: contain;
@@ -452,6 +455,11 @@
       }
       #panel .scores > * {
         flex-grow: 1 !important;
+      }
+    }
+    @media (orientation: landscape) {
+      #panel {
+        padding-left: 1vmin;
       }
     }
     @media (max-width: 500px) {
