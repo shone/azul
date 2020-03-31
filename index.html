@@ -63,7 +63,7 @@
     function updateBoardSize() {
       let size = 0;
       if (window.innerWidth > window.innerHeight) {
-        const bodyMargin = window.innerHeight * 0.01;
+        const bodyMargin = window.innerHeight * 0.02;
         size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.45)) + 'px';
       } else {
         const bodyMargin = window.innerWidth * 0.01;
