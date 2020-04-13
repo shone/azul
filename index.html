@@ -33,9 +33,9 @@
             <div class="value" id="vertical-bonus">0</div>
           </div>
         </div>
-      </div>
-      <div id="total-score">
-        0
+        <div id="total-score">
+          0
+        </div>
       </div>
     </div>
   </body>
@@ -66,8 +66,8 @@
         const bodyMargin = window.innerHeight * 0.02;
         size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.45)) + 'px';
       } else {
-        const bodyMargin = window.innerWidth * 0.01;
-        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.55)) + 'px';
+        const bodyMargin = window.innerWidth * 0.02;
+        size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.45)) + 'px';
       }
       board.style.width  = size;
       board.style.height = size;
@@ -422,17 +422,13 @@
       color: white;
       font-size: 5vmin;
       user-select: text;
-      height: 7vmin;
       flex-grow: 0;
       flex-shrink: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-    @media (orientation: portrait) {
-      #total-score {
-        height: 9vmin;
-      }
+      margin: 0.5vmin;
+      min-width: 7vmin;
     }
     #panel .value {
       position: absolute;
@@ -451,13 +447,11 @@
       #panel {
         width: auto;
         min-height: 50vmin;
+        padding-bottom: 1vmin;
       }
       #panel .scores {
         flex-direction: row;
         flex-grow: 1;
-      }
-      #panel .scores > * {
-        flex-grow: 1 !important;
       }
     }
     @media (orientation: landscape) {
