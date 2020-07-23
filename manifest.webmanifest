@@ -1,7 +1,7 @@
 {
   "name": "Azul",
   "short_name": "Azul",
-  "start_url": "/piano/",
+  "start_url": "/azul/",
   "display": "fullscreen",
   "theme_color": "#000",
   "background_color": "#000",
