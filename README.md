@@ -2,6 +2,6 @@
 
 A point calculator for the [Azul boardgame](https://en.wikipedia.org/wiki/Azul_(board_game))
 
-Try it at [joshshone.com/azul](https://joshshone.com/azul/)
+Try it at [shone.dev/azul](https://shone.dev/azul/)
 
 ![Screenshot](screenshot.png)
