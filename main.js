@@ -1,5 +1,10 @@
 "use strict";
 
+if (location.protocol !== 'file:') {
+  // Register service worker so app can be installed as a PWA
+  navigator.serviceWorker.register('service-worker.js', {scope: './'});
+}
+
 const board = document.getElementById('board');
 
 let tilesScore = 0;
