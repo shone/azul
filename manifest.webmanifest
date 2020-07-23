@@ -1,0 +1,28 @@
+{
+  "name": "Azul",
+  "short_name": "Azul",
+  "start_url": "/piano/",
+  "display": "fullscreen",
+  "theme_color": "#000",
+  "background_color": "#000",
+  "lang": "en-US",
+  "description": "A point calculator for the Azul boardgame.",
+  "categories": ["boardgames"],
+  "icons": [
+    {
+      "src": "images/favicon_64x64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "images/favicon_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/favicon_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
