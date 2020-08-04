@@ -32,6 +32,7 @@ body {
   grid-template-columns: repeat(5, 20%);
   grid-template-rows:    repeat(5, 20%);
   align-self: center;
+  touch-action: none;
 }
 
 .square {
@@ -50,6 +51,8 @@ body {
   position: relative;
   overflow: hidden;
   z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 .square::before {
   opacity: 0.3;
@@ -68,7 +71,9 @@ body {
   box-shadow: inset -1vmin -1vmin 1vmin rgba(0,0,0,0.23), inset 1vmin 1vmin 1vmin rgba(255,255,255,0.55);
 }
 .square.active {
-  outline: 1vmin solid orange;
+  color: white;
+  font-size: 0.15em;
+  text-shadow: 0 0 5vmin white, 0 0 2vmin black;
   z-index: 2;
 }
 .square.active:hover {
@@ -145,6 +150,8 @@ button {
   font-size: 3vmin;
   color: #797979;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 button::-moz-focus-inner {
   border: 0;

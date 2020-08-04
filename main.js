@@ -1,6 +1,6 @@
 "use strict";
 
-if (location.protocol !== 'file:') {
+if (navigator.serviceWorker) {
   // Register service worker so app can be installed as a PWA
   navigator.serviceWorker.register('service-worker.js', {scope: './'});
 }
@@ -40,18 +40,17 @@ updateBoardSize();
 window.onresize = updateBoardSize;
 
 // Setup audio
-const clinks = [
-  new Audio('sounds/clink.mp3'),
-  new Audio('sounds/clink.mp3'),
-  new Audio('sounds/clink.mp3'),
-  new Audio('sounds/clink.mp3'),
+const clicks = [
+  new Audio('click.wav'),
+  new Audio('click.wav'),
+  new Audio('click.wav'),
+  new Audio('click.wav'),
 ];
-function playClink() {
-  const clink = clinks.pop();
-  clink.play();
-  clinks.unshift(clink);
+function playClick() {
+  const sound = clicks.pop();
+  sound.play();
+  clicks.unshift(sound);
 }
-const swooshSound = new Audio('sounds/swoosh.mp3');
 
 function calculateSquareValues() {
   for (const square of [...board.querySelectorAll('.square:not(.filled)')]) {
@@ -93,24 +92,38 @@ function getAdjacentFilledSquare(square, direction) {
   return board.querySelector(`.square.filled[data-x="${x}"][data-y="${y}"]`);
 }
 
-board.onmousedown = event => {
-  if (event.target.classList.contains('square')) {
-    toggleSquare(event.target);
-    event.preventDefault();
+board.onpointerdown = event => {
+  if (board.onpointermove) {
+    return;
   }
-}
-board.onmouseover = event => {
-  if (event.buttons === 1) {
-    const element = document.elementFromPoint(event.clientX, event.clientY);
-    if (element.classList.contains('square')) {
-      toggleSquare(element);
+
+  const square = event.target.closest('.square');
+  if (square) {
+    event.preventDefault();
+    const pointerId = event.pointerId;
+
+    toggleSquare(square);
+
+    const isFilling = square.classList.contains('filled');
+
+    board.onpointermove = event => {
+      if (event.pointerId !== pointerId) {
+        return;
+      }
+      const element = document.elementFromPoint(event.clientX, event.clientY);
+      if (element && element.classList.contains('square') && (element.classList.contains('filled') !== isFilling)) {
+        toggleSquare(element);
+      }
     }
-  }
-}
-board.ontouchstart = event => {
-  if (event.target.classList.contains('square')) {
-    toggleSquare(event.target);
-    event.preventDefault();
+
+    board.onpointerup = board.onpointercancel = event => {
+      if (event.pointerId !== pointerId) {
+        return;
+      }
+      board.onpointermove = null;
+      board.onpointerup = null;
+      board.onpointercancel = null;
+    }
   }
 }
 
@@ -125,7 +138,7 @@ function flashScoreBox(scoreBox) {
 function toggleSquare(square) {
   const value = parseInt(square.textContent);
   if (!square.classList.contains('filled')) {
-    playClink();
+    playClick();
     square.classList.add('filled', 'active');
     if (filledSquares.length) {
       filledSquares[filledSquares.length-1].classList.remove('active');
@@ -149,7 +162,7 @@ function toggleSquare(square) {
     if (filledSquares.length) {
       filledSquares[filledSquares.length-1].classList.add('active');
     }
-    swooshSound.play();
+    playClick();
   }
   calculateSquareValues();
   updateScores();
@@ -169,9 +182,8 @@ function undo() {
   if (activeSquare) {
     toggleSquare(activeSquare);
   }
-  swooshSound.play();
 }
-document.getElementById('undo-button').onclick = undo;
+document.getElementById('undo-button').onpointerdown = undo;
 
 function clear() {
   for (const square of [...board.getElementsByClassName('square')]) {
@@ -184,9 +196,9 @@ function clear() {
   verticalBonus = 0;
   allColorsBonus = 0;
   updateScores();
-  swooshSound.play();
+  playClick();
 }
-document.getElementById('clear-button').onclick = clear;
+document.getElementById('clear-button').onpointerdown = clear;
 
 window.addEventListener('keypress', event => {
   if (event.ctrlKey && event.key === 'z') {
