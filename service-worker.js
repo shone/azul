@@ -12,8 +12,7 @@ self.addEventListener('install', event => {
       'images/all-color-bonus.svg',
       'images/horizontal-bonus.svg',
       'images/vertical-bonus.svg',
-      'sounds/clink.mp3',
-      'sounds/swoosh.mp3',
+      'click.wav',
     ]);
   }());
 });
