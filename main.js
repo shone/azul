@@ -100,7 +100,9 @@ board.onpointerdown = event => {
   const square = event.target.closest('.square');
   if (square) {
     event.preventDefault();
+
     const pointerId = event.pointerId;
+    board.setPointerCapture(pointerId);
 
     toggleSquare(square);
 
@@ -120,6 +122,7 @@ board.onpointerdown = event => {
       if (event.pointerId !== pointerId) {
         return;
       }
+      board.releasePointerCapture(pointerId);
       board.onpointermove = null;
       board.onpointerup = null;
       board.onpointercancel = null;
@@ -138,7 +141,6 @@ function flashScoreBox(scoreBox) {
 function toggleSquare(square) {
   const value = parseInt(square.textContent);
   if (!square.classList.contains('filled')) {
-    playClick();
     square.classList.add('filled', 'active');
     if (filledSquares.length) {
       filledSquares[filledSquares.length-1].classList.remove('active');
@@ -152,6 +154,7 @@ function toggleSquare(square) {
     if (square.verticalBonus   > 0) flashScoreBox(document.querySelector('.vertical-bonus-score-box'));
     if (square.horizontalBonus > 0) flashScoreBox(document.querySelector('.horizontal-bonus-score-box'));
     if (square.allColorsBonus  > 0) flashScoreBox(document.querySelector('.all-colors-bonus-score-box'));
+    playClick();
   } else if (square === filledSquares[filledSquares.length-1]) {
     const activeSquare = filledSquares.pop();
     activeSquare.classList.remove('filled', 'active');
