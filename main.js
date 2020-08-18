@@ -7,37 +7,33 @@ if (navigator.serviceWorker) {
 
 const board = document.getElementById('board');
 
+const tilesScoreEl      = document.getElementById('tiles-score');
+const horizontalBonusEl = document.getElementById('horizontal-bonus');
+const verticalBonusEl   = document.getElementById('vertical-bonus');
+const allColorsBonusEl  = document.getElementById('all-colors-bonus');
+const totalScoreEl      = document.getElementById('total-score');
+
+const tilesScoreBox           = document.querySelector('.tiles-score-box');
+const verticalBonusScoreBox   = document.querySelector('.vertical-bonus-score-box');
+const horizontalBonusScoreBox = document.querySelector('.horizontal-bonus-score-box');
+const allColorsBonusScoreBox  = document.querySelector('.all-colors-bonus-score-box');
+
 let tilesScore = 0;
 let horizontalBonus = 0;
 let verticalBonus = 0;
 let allColorsBonus = 0;
-let filledSquares = [];
 
 // Create squares
 const colors = ['blue', 'orange-red', 'red', 'black-blue', 'white-blue'];
+let squaresHtml = '';
 for (let y=0; y< 5; y++) {
   for (let x=0; x< 5; x++) {
-    board.insertAdjacentHTML('beforeend', `<span class="square" data-x="${x}" data-y="${y}" data-color="${colors[x]}"></span>`);
+    squaresHtml += `<span class="square" data-x="${x}" data-y="${y}" data-color="${colors[(x+(y*4)) % colors.length]}">1</span>`;
   }
-  // Rotate colors on each row
-  colors.unshift(colors.pop());
 }
-
-function updateBoardSize() {
-  let size = 0;
-  if (window.innerWidth > window.innerHeight) {
-    const bodyMargin = window.innerHeight * 0.02;
-    size = Math.min(window.innerHeight - (bodyMargin * 2), window.innerWidth - (window.innerHeight * 0.45)) + 'px';
-  } else {
-    const bodyMargin = window.innerWidth * 0.02;
-    size = Math.min(window.innerWidth - (bodyMargin * 2), window.innerHeight - (window.innerHeight * 0.45)) + 'px';
-  }
-  board.style.width  = size;
-  board.style.height = size;
-  board.style.fontSize = size;
-}
-updateBoardSize();
-window.onresize = updateBoardSize;
+board.innerHTML = squaresHtml;
+const squares = [...board.children];
+let filledSquares = [];
 
 // Setup audio
 const clicks = [
@@ -93,40 +89,45 @@ function getAdjacentFilledSquare(square, direction) {
 }
 
 board.onpointerdown = event => {
+  event.preventDefault();
+
+  if (event.button && event.button > 0) {
+    return;
+  }
   if (board.onpointermove) {
     return;
   }
 
   const square = event.target.closest('.square');
-  if (square) {
-    event.preventDefault();
+  if (!square) {
+    return;
+  }
 
-    const pointerId = event.pointerId;
-    board.setPointerCapture(pointerId);
+  const pointerId = event.pointerId;
+  board.setPointerCapture(pointerId);
 
-    toggleSquare(square);
+  toggleSquare(square);
 
-    const isFilling = square.classList.contains('filled');
+  const isFilling = square.classList.contains('filled');
 
-    board.onpointermove = event => {
-      if (event.pointerId !== pointerId) {
-        return;
-      }
-      const element = document.elementFromPoint(event.clientX, event.clientY);
-      if (element && element.classList.contains('square') && (element.classList.contains('filled') !== isFilling)) {
-        toggleSquare(element);
-      }
+  board.onpointermove = event => {
+    if (event.pointerId !== pointerId) {
+      return;
     }
-
-    board.onpointerup = board.onpointercancel = event => {
-      if (event.pointerId !== pointerId) {
-        return;
-      }
-      board.releasePointerCapture(pointerId);
-      board.onpointermove = null;
-      board.onpointerup = null;
-      board.onpointercancel = null;
+    const element = document.elementFromPoint(event.clientX, event.clientY);
+    if (element && element.classList.contains('square') && (element.classList.contains('filled') !== isFilling)) {
+      toggleSquare(element);
     }
+  }
+
+  board.onpointerup = board.onpointercancel = event => {
+    if (event.pointerId !== pointerId) {
+      return;
+    }
+    board.releasePointerCapture(pointerId);
+    board.onpointermove = null;
+    board.onpointerup = null;
+    board.onpointercancel = null;
   }
 }
 
@@ -139,10 +140,9 @@ function flashScoreBox(scoreBox) {
 }
 
 function toggleSquare(square) {
-  const value = parseInt(square.textContent);
   if (!square.classList.contains('filled')) {
     square.classList.add('filled', 'active');
-    if (filledSquares.length) {
+    if (filledSquares.length > 0) {
       filledSquares[filledSquares.length-1].classList.remove('active');
     }
     filledSquares.push(square);
@@ -150,10 +150,10 @@ function toggleSquare(square) {
     verticalBonus   += square.verticalBonus;
     horizontalBonus += square.horizontalBonus;
     allColorsBonus  += square.allColorsBonus;
-    if (square.tileValue       > 0) flashScoreBox(document.querySelector('.tiles-score-box'));
-    if (square.verticalBonus   > 0) flashScoreBox(document.querySelector('.vertical-bonus-score-box'));
-    if (square.horizontalBonus > 0) flashScoreBox(document.querySelector('.horizontal-bonus-score-box'));
-    if (square.allColorsBonus  > 0) flashScoreBox(document.querySelector('.all-colors-bonus-score-box'));
+    if (square.tileValue       > 0) flashScoreBox(tilesScoreBox);
+    if (square.verticalBonus   > 0) flashScoreBox(verticalBonusScoreBox);
+    if (square.horizontalBonus > 0) flashScoreBox(horizontalBonusScoreBox);
+    if (square.allColorsBonus  > 0) flashScoreBox(allColorsBonusScoreBox);
     playClick();
   } else if (square === filledSquares[filledSquares.length-1]) {
     const activeSquare = filledSquares.pop();
@@ -162,7 +162,7 @@ function toggleSquare(square) {
     verticalBonus   -= square.verticalBonus;
     horizontalBonus -= square.horizontalBonus;
     allColorsBonus  -= square.allColorsBonus;
-    if (filledSquares.length) {
+    if (filledSquares.length > 0) {
       filledSquares[filledSquares.length-1].classList.add('active');
     }
     playClick();
@@ -173,23 +173,23 @@ function toggleSquare(square) {
 
 function updateScores() {
   const bonusDisplayText = score => (score > 0) ? `+${score}` : '0';
-  document.getElementById('tiles-score').textContent = tilesScore;
-  document.getElementById('horizontal-bonus').textContent = bonusDisplayText(horizontalBonus);
-  document.getElementById('vertical-bonus').textContent = bonusDisplayText(verticalBonus);
-  document.getElementById('all-colors-bonus').textContent = bonusDisplayText(allColorsBonus);
-  document.getElementById('total-score').textContent = tilesScore + horizontalBonus + verticalBonus + allColorsBonus;
+  tilesScoreEl.textContent = tilesScore;
+  horizontalBonusEl.textContent = bonusDisplayText(horizontalBonus);
+  verticalBonusEl.textContent = bonusDisplayText(verticalBonus);
+  allColorsBonusEl.textContent = bonusDisplayText(allColorsBonus);
+  totalScoreEl.textContent = tilesScore + horizontalBonus + verticalBonus + allColorsBonus;
 }
 
 function undo() {
-  const activeSquare = board.querySelector('.active');
-  if (activeSquare) {
+  if (filledSquares.length > 0) {
+    const activeSquare = filledSquares[filledSquares.length-1];
     toggleSquare(activeSquare);
   }
 }
 document.getElementById('undo-button').onpointerdown = undo;
 
 function clear() {
-  for (const square of [...board.getElementsByClassName('square')]) {
+  for (const square of squares) {
     square.classList.remove('filled', 'active');
     square.textContent = '1';
   }

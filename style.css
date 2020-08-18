@@ -29,11 +29,24 @@ body {
 }
 
 #board {
+  width:     var(--size);
+  height:    var(--size);
+  font-size: var(--size);
   display: grid;
   grid-template-columns: repeat(5, 20%);
   grid-template-rows:    repeat(5, 20%);
   align-self: center;
   touch-action: none;
+}
+@media (orientation: landscape) {
+  #board {
+    --size: min(96vh, 100vw - 45vh);
+  }
+}
+@media (orientation: portrait) {
+  #board {
+    --size: min(96vw, 65vh);
+  }
 }
 
 .square {
@@ -96,9 +109,7 @@ img[src="images/azul_logo.svg"] {
   background-color: white;
   box-shadow: inset 0 0 6vmin #000000ad;
   border-radius: 1vmin;
-  padding-bottom: 2vmin;
   flex-grow: 1;
-  min-height: 15vh;
 }
 
 #panel {
@@ -227,7 +238,6 @@ button:active {
 @media (orientation: portrait) {
   #panel {
     width: auto;
-    min-height: 50vmin;
     padding-bottom: 1vmin;
   }
   #panel .scores {
